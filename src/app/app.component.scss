@@ -1,0 +1,106 @@
+:host { display: block; height: 100vh; }
+
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: 'Courier New', monospace;
+
+  // ── SIDEBAR ────────────────────────────────────────────────────────────
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: #161b22;
+    border-right: 0.5px solid #30363d;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.25s ease, min-width 0.25s ease;
+    overflow: hidden;
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 14px;
+      border-bottom: 0.5px solid #30363d;
+      background: #0d1117;
+
+      .logo-icon { font-size: 18px; color: #58a6ff; }
+      .logo-text  { font-size: 14px; font-weight: bold; letter-spacing: 3px; color: #58a6ff; flex: 1; }
+      .collapse-btn {
+        background: none; border: none; color: #8b949e; cursor: pointer;
+        font-size: 16px; padding: 2px;
+        &:hover { color: #58a6ff; }
+      }
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 6px;
+      color: #8b949e;
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      transition: all 0.15s;
+      position: relative;
+
+      &:hover { background: #1c2128; color: #c9d1d9; }
+      &.active { background: #1a2a3a; color: #58a6ff; border: 0.5px solid #1f4070; }
+
+      .nav-icon  { font-size: 14px; flex-shrink: 0; }
+      .nav-label { white-space: nowrap; overflow: hidden; }
+
+      .alert-badge {
+        margin-left: auto;
+        background: #d29922; color: #0d1117;
+        border-radius: 10px; padding: 0 6px;
+        font-size: 10px; font-weight: bold;
+        animation: blink 2s infinite;
+      }
+    }
+
+    .sidebar-footer {
+      padding: 12px 14px;
+      border-top: 0.5px solid #30363d;
+      font-size: 11px;
+
+      .ws-status {
+        display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+        .ws-dot.live { color: #3fb950; animation: pulse 2s infinite; }
+        .ws-label { color: #8b949e; letter-spacing: 1px; }
+      }
+      .clock { color: #58a6ff; letter-spacing: 2px; font-size: 13px; font-weight: bold; }
+    }
+  }
+
+  // ── COLLAPSED STATE ────────────────────────────────────────────────────
+  &.collapsed .sidebar {
+    width: 52px;
+    min-width: 52px;
+    .logo-text, .nav-label, .ws-label, .clock, .collapse-btn { display: none; }
+    .nav-item { justify-content: center; padding: 10px; }
+  }
+
+  // ── MAIN ──────────────────────────────────────────────────────────────
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    background: #0d1117;
+  }
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }

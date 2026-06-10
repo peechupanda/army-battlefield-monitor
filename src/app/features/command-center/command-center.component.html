@@ -1,0 +1,86 @@
+<div class="cmd-page">
+  <div class="cmd-header">
+    <div class="cmd-title">⬡ COMMAND CENTER</div>
+    <div class="cmd-status" [class.processing]="isProcessing">
+      {{ isProcessing ? '⏳ PROCESSING...' : '● READY' }}
+    </div>
+  </div>
+
+  <div class="cmd-body">
+    <!-- LEFT: Config + Buttons -->
+    <div class="cmd-left">
+      <div class="panel">
+        <div class="p-hdr">⬡ TARGET PARAMETERS</div>
+        <div class="p-body">
+          <div class="field">
+            <label>SECTOR</label>
+            <div class="sector-btns">
+              <button *ngFor="let s of sectors"
+                      class="sec-btn"
+                      [class.active]="sector === s"
+                      [style.border-color]="sector === s ? sectorColor(s) : ''"
+                      [style.color]="sector === s ? sectorColor(s) : ''"
+                      (click)="sector = s">{{ s }}</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>TROOP TYPE</label>
+            <select [(ngModel)]="troopType">
+              <option *ngFor="let t of troopTypes" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>COUNT</label>
+            <input type="number" [(ngModel)]="count" min="1" max="200">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-hdr">⬡ SECTOR STATUS</div>
+        <div class="p-body">
+          <div class="sec-status-item" *ngFor="let s of sectors"
+               [class.selected]="sector === s">
+            <span [style.color]="sectorColor(s)">{{ s }}</span>
+            <div *ngIf="sectorStats[s] as st" class="sec-badges">
+              <span class="badge a">{{ st.active }}A</span>
+              <span class="badge i">{{ st.injured }}I</span>
+              <span class="badge r">{{ st.reserve }}R</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Command Buttons -->
+    <div class="cmd-center">
+      <div class="p-hdr">⬡ ISSUE COMMAND</div>
+      <div class="command-grid">
+        <button *ngFor="let cmd of commands"
+                class="big-cmd-btn"
+                [style.color]="cmd.color"
+                [style.background]="cmd.bg"
+                [style.border-color]="cmd.color"
+                [disabled]="isProcessing"
+                (click)="issue(cmd.type)">
+          <div class="bcb-label">{{ cmd.label }}</div>
+          <div class="bcb-desc">{{ cmd.desc }}</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Command Log -->
+    <div class="cmd-right">
+      <div class="panel full-h">
+        <div class="p-hdr">⬡ COMMAND LOG</div>
+        <div class="log-list">
+          <div class="log-item" *ngFor="let entry of log">
+            <span class="log-time">[{{ entry.time }}]</span>
+            <span class="log-msg" [style.color]="entry.color"> > {{ entry.msg }}</span>
+          </div>
+          <div class="log-empty" *ngIf="log.length === 0">No commands issued yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

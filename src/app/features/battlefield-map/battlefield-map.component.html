@@ -1,0 +1,77 @@
+<div class="map-page">
+
+  <!-- MAP HEADER -->
+  <div class="map-header">
+    <div class="map-title">⬡ TACTICAL MAP</div>
+    <div class="map-controls">
+      <span class="grid-hover">{{ hoveredGrid }}</span>
+      <button class="ctrl-btn" [class.active]="is3D" (click)="toggle3D()">
+        {{ is3D ? '2D VIEW' : '3D VIEW' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="map-body">
+
+    <!-- LEAFLET MAP -->
+    <div class="map-container">
+      <div id="tactical-map" [class.tilt-3d]="is3D"></div>
+      <div class="map-legend">
+        <span class="leg active">● Active</span>
+        <span class="leg injured">● Injured</span>
+        <span class="leg reserve">● Reserve</span>
+        <span class="leg enemy">▲ Enemy</span>
+        <span class="leg hq">★ HQ</span>
+      </div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <div class="side-panel">
+
+      <!-- Sector Status -->
+      <div class="panel">
+        <div class="panel-hdr">⬡ SECTORS</div>
+        <div class="sector-list">
+          <div class="sector-item"
+               *ngFor="let s of sectors"
+               [class.selected]="selectedSector === s"
+               [style.border-left-color]="sectorColor(s)"
+               (click)="selectSector(s)">
+            <div class="sec-name" [style.color]="sectorColor(s)">SEC-{{ s | uppercase }}</div>
+            <div class="sec-stats" *ngIf="sectorStats[s] as st">
+              <span class="b act">{{ st.active }}A</span>
+              <span class="b inj">{{ st.injured }}I</span>
+              <span class="b res">{{ st.reserve }}R</span>
+              <span class="threat" *ngIf="st.injured > 3">⚠</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Command Center (mini) -->
+      <div class="panel cmd-panel">
+        <div class="panel-hdr">⬡ COMMAND</div>
+        <div class="cmd-body">
+          <select class="cmd-sel" [value]="commandSector" (change)="commandSector = $any($event.target).value">
+            <option *ngFor="let s of sectors" [value]="s">Sector {{ s }}</option>
+          </select>
+          <select class="cmd-sel" [value]="commandType" (change)="commandType = $any($event.target).value">
+            <option *ngFor="let t of troopTypes" [value]="t">{{ t }}</option>
+          </select>
+          <input type="number" class="cmd-input" [value]="commandCount"
+                 (input)="commandCount = +$any($event.target).value" min="1" max="200">
+          <div class="cmd-btns">
+            <button class="cmd-btn deploy"    (click)="issueCommand('DEPLOY')">▶ DEPLOY</button>
+            <button class="cmd-btn extract"   (click)="issueCommand('EXTRACT')">◀ EXTRACT</button>
+            <button class="cmd-btn medevac"   (click)="issueCommand('MEDEVAC')">✦ MEDEVAC</button>
+            <button class="cmd-btn reinforce" (click)="issueCommand('REINFORCE')">↑ REINFORCE</button>
+            <button class="cmd-btn airstrike" (click)="issueCommand('AIRSTRIKE')">✈ AIRSTRIKE</button>
+          </div>
+          <div class="cmd-log" *ngIf="commandLog">{{ commandLog }}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

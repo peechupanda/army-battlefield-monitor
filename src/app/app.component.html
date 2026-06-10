@@ -1,0 +1,37 @@
+<div class="app-shell" [class.collapsed]="sidebarCollapsed">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-icon">⚔</span>
+      <span class="logo-text">BFMS</span>
+      <button class="collapse-btn" (click)="toggleSidebar()">☰</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a *ngFor="let item of nav"
+         [routerLink]="item.path"
+         routerLinkActive="active"
+         class="nav-item">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+        <span *ngIf="item.label === 'ALERTS' && (alertCount$ | async) as count"
+              class="alert-badge">{{ count }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="ws-status">
+        <span class="ws-dot live">●</span>
+        <span class="ws-label">LIVE FEED</span>
+      </div>
+      <div class="clock">{{ currentTime | date:'HH:mm:ss' }}</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <router-outlet />
+  </main>
+
+</div>

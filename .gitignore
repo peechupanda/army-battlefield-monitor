@@ -1,0 +1,19 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Angular build output
+dist/
+.angular/
+
+# Environment (sensitive - add your real keys here)
+# src/environments/environment.prod.ts  ← uncomment if your prod env has secrets
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

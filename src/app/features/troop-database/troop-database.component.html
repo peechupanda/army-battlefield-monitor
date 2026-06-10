@@ -1,0 +1,86 @@
+<div class="db-page">
+
+  <!-- HEADER -->
+  <div class="db-header">
+    <div class="db-title">⬡ TROOP DATABASE</div>
+    <div class="db-stats">
+      <span class="ds active">● {{ stats.active }} ACTIVE</span>
+      <span class="ds injured">✦ {{ stats.injured }} INJURED</span>
+      <span class="ds reserve">■ {{ stats.reserve }} RESERVE</span>
+      <span class="ds total">⬡ {{ stats.total }} TOTAL</span>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <input
+      type="text"
+      class="search-box"
+      placeholder="Search by name, ID, unit…"
+      [(ngModel)]="searchQuery"
+      (input)="applyFilters()">
+
+    <div class="filter-group">
+      <label>STATUS</label>
+      <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="injured">Injured</option>
+        <option value="reserve">Reserve</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>SECTOR</label>
+      <select [(ngModel)]="filterSector" (change)="applyFilters()">
+        <option value="all">All</option>
+        <option *ngFor="let s of sectors" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <span class="record-count">{{ troops.length }} / {{ stats.total }} records</span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th (click)="sortBy('id')">ID <span class="sort-icon">⇅</span></th>
+          <th (click)="sortBy('name')">NAME <span class="sort-icon">⇅</span></th>
+          <th (click)="sortBy('rank')">RANK <span class="sort-icon">⇅</span></th>
+          <th (click)="sortBy('unit')">UNIT <span class="sort-icon">⇅</span></th>
+          <th (click)="sortBy('status')">STATUS <span class="sort-icon">⇅</span></th>
+          <th (click)="sortBy('sector')">SECTOR <span class="sort-icon">⇅</span></th>
+          <th>COORDS</th>
+          <th (click)="sortBy('lastUpdated')">UPDATED <span class="sort-icon">⇅</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of troops; let i = index"
+            [class.even]="i % 2 === 0"
+            [class.injured-row]="t.status === 'injured'"
+            [class.reserve-row]="t.status === 'reserve'">
+          <td class="id-cell">{{ t.id }}</td>
+          <td class="name-cell">{{ t.name }}</td>
+          <td class="rank-cell">{{ t.rank }}</td>
+          <td class="unit-cell">{{ t.unit }}</td>
+          <td>
+            <span class="status-badge"
+                  [style.color]="statusColor(t.status)"
+                  [style.background]="statusColor(t.status) + '22'">
+              {{ statusLabel(t.status) }}
+            </span>
+          </td>
+          <td [style.color]="sectorColor(t.sector)">{{ t.sector | uppercase }}</td>
+          <td class="coords-cell">{{ t.latitude | number:'1.3-3' }}, {{ t.longitude | number:'1.3-3' }}</td>
+          <td class="upd-cell">{{ timeAgo(t.lastUpdated) }}</td>
+        </tr>
+        <tr *ngIf="troops.length === 0">
+          <td colspan="8" class="empty-row">No troops match current filters</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

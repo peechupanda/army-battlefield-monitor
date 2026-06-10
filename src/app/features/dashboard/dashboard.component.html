@@ -1,0 +1,172 @@
+<div class="dashboard">
+
+  <!-- TOP STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-card active">
+      <div class="stat-icon">●</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.active }}</div>
+        <div class="stat-label">ACTIVE</div>
+      </div>
+    </div>
+    <div class="stat-card injured">
+      <div class="stat-icon">✦</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.injured }}</div>
+        <div class="stat-label">INJURED</div>
+      </div>
+    </div>
+    <div class="stat-card reserve">
+      <div class="stat-icon">■</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.reserve }}</div>
+        <div class="stat-label">RESERVE</div>
+      </div>
+    </div>
+    <div class="stat-card total">
+      <div class="stat-icon">⬡</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">TOTAL</div>
+      </div>
+    </div>
+    <div class="stat-card combat-ready">
+      <div class="stat-icon">◎</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.combatReadyPct }}%</div>
+        <div class="stat-label">COMBAT READY</div>
+      </div>
+    </div>
+    <div class="stat-card kia" *ngIf="situation">
+      <div class="stat-icon">✕</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ situation.kiaToday }}</div>
+        <div class="stat-label">KIA TODAY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WAR SITUATION BANNER -->
+  <div class="war-situation" *ngIf="situation">
+    <div class="sit-item">
+      <span class="sit-label">WAR PHASE</span>
+      <span class="sit-value phase">{{ situation.phase | uppercase }}</span>
+    </div>
+    <div class="sit-item territory">
+      <span class="sit-label">TERRITORY CONTROL</span>
+      <div class="territory-track">
+        <div class="territory-fill" [style.width.%]="situation.territoryControlPct"
+             [style.background]="situation.territoryControlPct > 60 ? '#3fb950' : situation.territoryControlPct > 40 ? '#d29922' : '#f85149'"></div>
+      </div>
+      <span class="sit-value" [style.color]="situation.territoryControlPct > 60 ? '#3fb950' : '#d29922'">{{ situation.territoryControlPct }}%</span>
+    </div>
+    <div class="sit-item">
+      <span class="sit-label">THREAT LEVEL</span>
+      <span class="sit-value" [style.color]="threatColor(situation.threatLevel)">{{ situation.threatLevel | uppercase }}</span>
+    </div>
+    <div class="sit-item">
+      <span class="sit-label">MISSIONS</span>
+      <span class="sit-value">{{ situation.missionsCompleted }}/{{ situation.missionsTotal }}</span>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- SECTOR BREAKDOWN -->
+    <div class="panel sectors-panel">
+      <div class="panel-header">⬡ SECTOR STATUS</div>
+      <div class="sector-list">
+        <div class="sector-item" *ngFor="let s of sectors"
+             [style.border-left-color]="sectorColor(s)">
+          <div class="sector-name" [style.color]="sectorColor(s)">SEC-{{ s | uppercase }}</div>
+          <div class="sector-stats" *ngIf="sectorBreakdown[s] as sb">
+            <span class="badge active">{{ sb.active }}A</span>
+            <span class="badge injured">{{ sb.injured }}I</span>
+            <span class="badge reserve">{{ sb.reserve }}R</span>
+            <div class="sector-bar">
+              <div class="sector-bar-fill" [style.width.%]="sb.combatReadyPct" [style.background]="sectorColor(s)"></div>
+            </div>
+            <span class="sector-pct">{{ sb.combatReadyPct }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STRENGTH CHART -->
+    <div class="panel chart-panel">
+      <div class="panel-header">⬡ STRENGTH OVERVIEW</div>
+      <div class="strength-bars">
+        <div class="strength-bar-row" *ngFor="let item of [
+          {label:'ACTIVE',  value: stats.active,  max: stats.total, color: '#3fb950'},
+          {label:'INJURED', value: stats.injured, max: stats.total, color: '#f85149'},
+          {label:'RESERVE', value: stats.reserve, max: stats.total, color: '#a16207'}
+        ]">
+          <span class="bar-label" [style.color]="item.color">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="item.max > 0 ? (item.value/item.max*100) : 0"
+                 [style.background]="item.color"></div>
+          </div>
+          <span class="bar-val" [style.color]="item.color">{{ item.value }}</span>
+        </div>
+        <div class="readiness-ring">
+          <div class="ring-value">{{ stats.combatReadyPct }}%</div>
+          <div class="ring-label">COMBAT READY</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="panel alerts-panel">
+      <div class="panel-header">
+        ⚠ RECENT ALERTS
+        <a routerLink="/alerts" class="panel-link">View all →</a>
+      </div>
+      <div class="alerts-list">
+        <div class="alert-item" *ngFor="let a of alerts"
+             [style.border-left-color]="alertColor(a.level)">
+          <div class="alert-meta">
+            <span class="alert-level" [style.color]="alertColor(a.level)">{{ a.level | uppercase }}</span>
+            <span class="alert-time">{{ timeAgo(a.timestamp) }}</span>
+          </div>
+          <div class="alert-msg">{{ a.message }}</div>
+        </div>
+        <div class="no-alerts" *ngIf="alerts.length === 0">● ALL CLEAR — No active alerts</div>
+      </div>
+    </div>
+
+    <!-- MISSIONS -->
+    <div class="panel missions-panel">
+      <div class="panel-header">⬡ ACTIVE MISSIONS</div>
+      <div class="mission-list">
+        <div class="mission-item" *ngFor="let m of missions">
+          <div class="mission-header">
+            <span class="mission-name">{{ m.name }}</span>
+            <span class="mission-status" [style.color]="missionColor(m.status)">{{ m.status | uppercase }}</span>
+          </div>
+          <div class="mission-meta">
+            <span [style.color]="sectorColor(m.sector)">{{ m.sector }}</span>
+            <span class="mission-type">{{ m.type }}</span>
+          </div>
+        </div>
+        <div class="no-missions" *ngIf="missions.length === 0">No active missions</div>
+      </div>
+    </div>
+
+  </div><!-- end main-grid -->
+
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <a routerLink="/map"     class="action-btn map">⬡ TACTICAL MAP</a>
+    <a routerLink="/troops"  class="action-btn troops">⬡ TROOP DATABASE</a>
+    <a routerLink="/command" class="action-btn command">⬡ COMMAND CENTER</a>
+    <a routerLink="/alerts"  class="action-btn alerts">⚠ ALERTS</a>
+  </div>
+
+  <!-- INTEL TICKER -->
+  <div class="intel-ticker">
+    <span class="ticker-label">⚠ INTEL:</span>
+    <span class="ticker-msg">{{ tickerMessage }}</span>
+  </div>
+
+</div>
