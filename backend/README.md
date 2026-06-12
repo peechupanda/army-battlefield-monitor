@@ -1,98 +1,133 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# ⚔ BFMS Backend — Express + PostgreSQL + WebSocket
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API + real-time WebSocket server for the Army Battlefield Monitoring System.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Tech Stack
+- **Node.js + Express** — REST API
+- **PostgreSQL** — database
+- **WebSocket (ws)** — real-time push to Angular
+- **dotenv** — environment config
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## API Endpoints
 
-```bash
-$ npm install
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/health` | Server health check |
+| GET | `/api/troops` | Get all troops |
+| GET | `/api/troops?status=active&sector=Alpha` | Filter troops |
+| GET | `/api/troops/:id` | Get single troop |
+| POST | `/api/troops` | Add troop |
+| PATCH | `/api/troops/:id` | Update troop (status, position…) |
+| DELETE | `/api/troops/:id` | Remove troop |
+| GET | `/api/troops/stats/summary` | Stats per sector |
+| GET | `/api/alerts` | Get alerts |
+| POST | `/api/alerts` | Create alert |
+| PATCH | `/api/alerts/:id/acknowledge` | Acknowledge alert |
+| GET | `/api/enemies` | Get enemy positions |
+| POST | `/api/enemies` | Add/update enemy |
+| DELETE | `/api/enemies/:id` | Remove enemy |
+| GET | `/api/situation` | Get war situation |
+| PUT | `/api/situation` | Update war situation |
+| GET | `/api/missions` | Get missions |
+| POST | `/api/missions` | Create mission |
+| PATCH | `/api/missions/:id` | Update mission status |
+| GET | `/api/commands` | Get command log |
+| POST | `/api/commands` | Issue command |
+
+---
+
+## Quick Setup
+
+### 1. Install PostgreSQL
+Download: https://www.postgresql.org/download/windows/
+
+### 2. Create database
+```sql
+CREATE DATABASE army_bfms;
 ```
 
-## Compile and run the project
-
+### 3. Configure environment
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials
 ```
 
-## Run tests
-
+### 4. Install dependencies
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 5. Create tables
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run db:init
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 6. Start server
+```bash
+npm run dev      # development (auto-restart)
+npm start        # production
+```
 
-## Resources
+Server runs at: `http://localhost:3000`
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## WebSocket Events (Server → Angular)
 
-## Support
+| Event | When triggered |
+|---|---|
+| `TROOP_UPDATE` | Any troop status/position change |
+| `ALERT` | New alert created |
+| `ENEMY_UPDATE` | Enemy position added/updated |
+| `SITUATION_UPDATE` | War situation updated |
+| `COMMAND_UPDATE` | Command issued |
+| `MISSION_UPDATE` | Mission status changed |
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## Deploy Options
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Railway (recommended — free tier)
+1. Push to GitHub
+2. Go to railway.app → New Project → Deploy from GitHub
+3. Add PostgreSQL plugin
+4. Set environment variables
+5. Done — public URL auto-generated
 
-## License
+### Render
+1. New Web Service → connect GitHub repo
+2. Add PostgreSQL database
+3. Set env vars → Deploy
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Your own VPS
+```bash
+npm install -g pm2
+pm2 start server.js --name bfms-backend
+pm2 save
+```
+
+---
+
+## Connecting to Angular
+
+In `army-battlefield-monitor/src/environments/environment.ts`:
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000/api',
+  wsUrl:  'ws://localhost:3000',
+};
+```
+
+For production (`environment.prod.ts`):
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://your-backend.railway.app/api',
+  wsUrl:  'wss://your-backend.railway.app',
+};
+```
